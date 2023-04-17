@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+/Crack_PCD
+/Fine_PCD
+.blend1
