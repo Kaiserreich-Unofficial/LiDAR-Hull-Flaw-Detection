@@ -52,7 +52,7 @@ def main_func(i):
     print("样本"+str(i)+",压缩后点数量:{0:},压缩前点数量压缩率:{1:},压缩率:{2:.2%}".format(
         len(downpcd.points), len(pcd.points), len(downpcd.points)/len(pcd.points)))
     o3d.io.write_point_cloud(path+"/"+str(i)+".pcd", downpcd)
-    return "\n"
+    return
 
 
 if __name__ == "__main__":

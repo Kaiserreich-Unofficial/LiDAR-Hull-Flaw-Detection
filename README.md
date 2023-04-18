@@ -68,6 +68,8 @@ torchvision == 0.15.1+cu117
 
 ### 说明
 
+项目使用的模拟数据集(Kolektor Surface-Defect Dataset)来自Vicos.si，感谢Tabernik等作者的辛勤付出
+
 Fine_PCD 和 Crack_PCD 两个文件夹必须存在，否则程序无法正常运行（没有请自己创建）
 
 裂纹板/钢板表面重建程序算法同第一部分中的曲面重建，主要用来验证重建算法的理论可行性

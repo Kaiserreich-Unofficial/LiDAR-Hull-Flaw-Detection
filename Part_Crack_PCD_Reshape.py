@@ -2,8 +2,7 @@ import numpy as np
 import open3d as o3d
 import os
 from tabulate import tabulate
-
-Model = "Crack_PCD/1.pcd"
+from easygui import fileopenbox
 
 
 def Possion_Reshape(pcd):
@@ -31,14 +30,14 @@ def Crack_Cut(mesh):
     """重建曲面边界切割函数"""
     # 创建一个轴对齐的边界框对象
     bbox = o3d.geometry.AxisAlignedBoundingBox(
-        min_bound=(-635, -255, -5), max_bound=(635, 255, 0))
+        min_bound=(-635, -255, -5), max_bound=(635, 255, -0.01))
     cropped_mesh = mesh.crop(bbox)
     return cropped_mesh
 
 
 def Board_Cut(mesh):
     bbox = o3d.geometry.AxisAlignedBoundingBox(
-        min_bound=(-635, -255, 0), max_bound=(635, 255, 1))
+        min_bound=(-635, -255, -0.01), max_bound=(635, 255, 1))
     cropped_mesh = mesh.crop(bbox)
     return cropped_mesh
 
@@ -61,6 +60,7 @@ def Bound_Box(obj, obj_name, color, display_model=True):
     obj_bottom_bound = min(bound_point[2])  # 目标底坐标
     return [obj_stem_bound, obj_stern_bound, obj_left_bound, obj_right_bound, obj_top_bound, obj_bottom_bound]
 
+
 def main(Model):
     print("读取原船体模型并计算网格")
     if os.path.exists(Model):
@@ -81,7 +81,6 @@ def main(Model):
 
     print(tabulate(table, headers=["名称", "值"]))
 
-
     mesh = Possion_Reshape(pcd)
     Crack_Mesh = Crack_Cut(mesh).paint_uniform_color([1, 0.706, 0])  # 橙色
     Board_Mesh = Board_Cut(mesh).paint_uniform_color([0.706, 1, 0])  # 橙色
@@ -89,5 +88,10 @@ def main(Model):
     o3d.visualization.draw_geometries(
         [Crack_Mesh, Board_Mesh], window_name="重建后曲面")
 
+
 if __name__ == "__main__":
+    Model = fileopenbox(msg="曲面重建验证程序", title="打开点云文件",
+                        default="*.pcd", filetypes=["*.pcd"])
+    if not Model:
+        exit(-1)
     main(Model)
