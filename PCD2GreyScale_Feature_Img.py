@@ -31,7 +31,7 @@ def pcd2grayhistogram(file):
     # print(matrix)
 
     # 使用matplotlib.pyplot.imshow函数，将matrix作为输入，显示或保存灰度图片
-    plt.imshow(matrix, cmap='gray')
+    # plt.imshow(matrix, cmap='gray')
     # plt.show()
     plt.imsave(name+'.png', matrix, dpi=300, cmap='gray')
 
