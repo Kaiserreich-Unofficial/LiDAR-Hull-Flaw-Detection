@@ -6,10 +6,16 @@ import os
 from tqdm import tqdm
 from multiprocessing.pool import Pool
 import random
+from copy import deepcopy
 
 batch_size = 8
 Crack_PCD = "Crack_PCD"
 Fine_PCD = "Fine_PCD"
+
+
+def clean():
+    os.system("del Crack_PCD\*.jpg")
+    os.system("del Fine_PCD\*.jpg")
 
 
 def pcd2grayhistogram(file):
@@ -34,6 +40,7 @@ def pcd2grayhistogram(file):
     # plt.imshow(matrix, cmap='gray')
     # plt.show()
     plt.imsave(name+'.jpg', matrix, dpi=300, cmap='gray')
+    return 0
 
 
 def main(Source_Dir):
@@ -44,17 +51,15 @@ def main(Source_Dir):
         file_names.append(os.path.join(Source_Dir, filename))
     print('Label Image Count:', len(file_names))
     count = len(file_names)
-    Update_Status = True
     with tqdm(total=count) as pbar:
         pbar.set_description('转化为灰度直方图中:')
-        while Update_Status:
+        for i in range(int(count/batch_size) + 1):
             if len(file_names) > batch_size:
                 selected_files = random.sample(file_names, batch_size)
                 Update_Progress = batch_size
             else:
-                selected_files = file_names
+                selected_files = deepcopy(file_names)
                 Update_Progress = len(file_names)
-                Update_Status = False
             file_list = []
             for file in selected_files:
                 file_names.remove(file)
@@ -62,14 +67,15 @@ def main(Source_Dir):
 
             pool = Pool(Update_Progress)
             result = pool.map(pcd2grayhistogram, file_list)
-
-            pool.close()
+            if result == [0] * Update_Progress:
+                pool.close()
             pool.join()
 
             pbar.update(Update_Progress)
 
 
 if __name__ == "__main__":
+    clean()
     print("转换有裂缝板点云为灰度直方图...")
     main(Crack_PCD)
     print("转换无裂缝板点云为灰度直方图...")

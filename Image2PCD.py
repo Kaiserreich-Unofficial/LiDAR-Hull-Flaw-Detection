@@ -52,7 +52,7 @@ def main_func(i):
     print("样本"+str(i)+",压缩后点数量:{0:},压缩前点数量压缩率:{1:},压缩率:{2:.2%}".format(
         len(downpcd.points), len(pcd.points), len(downpcd.points)/len(pcd.points)))
     o3d.io.write_point_cloud(path+"/"+str(i)+".pcd", downpcd)
-    return
+    return 0
 
 
 if __name__ == "__main__":
@@ -71,8 +71,8 @@ if __name__ == "__main__":
 
             pool = Pool(batch_size)
             result = pool.map(main_func, numlist)
-
-            pool.close()
+            if result == [0]*batch_size:
+                pool.close()
             pool.join()
 
             pbar.update(batch_size)
