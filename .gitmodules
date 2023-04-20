@@ -1,0 +1,3 @@
+[submodule "YoloV7"]
+	path = YoloV7
+	url = git@github.com:bubbliiiing/yolov7-pytorch.git
