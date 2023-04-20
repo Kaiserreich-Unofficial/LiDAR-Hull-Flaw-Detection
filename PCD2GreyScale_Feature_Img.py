@@ -33,7 +33,7 @@ def pcd2grayhistogram(file):
     # 使用matplotlib.pyplot.imshow函数，将matrix作为输入，显示或保存灰度图片
     # plt.imshow(matrix, cmap='gray')
     # plt.show()
-    plt.imsave(name+'.png', matrix, dpi=300, cmap='gray')
+    plt.imsave(name+'.jpg', matrix, dpi=300, cmap='gray')
 
 
 def main(Source_Dir):
@@ -44,23 +44,29 @@ def main(Source_Dir):
         file_names.append(os.path.join(Source_Dir, filename))
     print('Label Image Count:', len(file_names))
     count = len(file_names)
-
+    Update_Status = True
     with tqdm(total=count) as pbar:
         pbar.set_description('转化为灰度直方图中:')
-        for i in range(1, int(count/batch_size)):
-            selected_files = random.sample(file_names, batch_size)
+        while Update_Status:
+            if len(file_names) > batch_size:
+                selected_files = random.sample(file_names, batch_size)
+                Update_Progress = batch_size
+            else:
+                selected_files = file_names
+                Update_Progress = len(file_names)
+                Update_Status = False
             file_list = []
             for file in selected_files:
                 file_names.remove(file)
                 file_list.append(file)
 
-            pool = Pool(batch_size)
+            pool = Pool(Update_Progress)
             result = pool.map(pcd2grayhistogram, file_list)
 
             pool.close()
             pool.join()
 
-            pbar.update(batch_size)
+            pbar.update(Update_Progress)
 
 
 if __name__ == "__main__":
