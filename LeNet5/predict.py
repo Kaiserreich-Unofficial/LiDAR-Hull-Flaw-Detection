@@ -3,7 +3,8 @@ from PIL import Image
 import numpy as np
 from model import LeNet
 import pickle
-from easygui import fileopenbox
+from easygui import fileopenbox,msgbox
+from os.path import basename
 
 # load the meta data file
 with open("batches.meta", "rb") as f:
@@ -63,4 +64,5 @@ if __name__ == "__main__":
     label_name, confidence = output_to_label_and_confidence(output)
 
     # print the image path and label name and confidence
-    print(f"Image: {image_path}, Label: {label_name}, Confidence: {confidence:.2f}%")
+    str = f"Image: {basename(image_path)}\nLabel: {label_name}\nConfidence: {confidence:.2f}%"
+    msgbox(msg=str,title="预测结果",ok_button="确定")
