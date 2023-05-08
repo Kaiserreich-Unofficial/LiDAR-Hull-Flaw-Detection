@@ -2,7 +2,7 @@ import pickle
 import numpy as np
 from PIL import Image
 import os
-
+from easygui import diropenbox
 
 def voc_to_cifar(voc_dir):
     # voc_dir is the directory of the VOC2007 dataset
@@ -93,9 +93,12 @@ def cifar_to_pickle(train_x, train_y, test_x, test_y):
         pickle.dump(test, f)
 
 
-# call the first function and get the converted dataset
-voc_dir = "VOCdevkit/VOC2007"
-(train_x, train_y), (test_x, test_y) = voc_to_cifar(voc_dir)
+if __name__ == "__main__":
+    # call the first function and get the converted dataset
+    voc_dir = diropenbox("请精确到VOC2007文件夹","打开VOC2007数据集")
+    if not voc_dir:
+        exit()
+    (train_x, train_y), (test_x, test_y) = voc_to_cifar(voc_dir)
 
-# call the second function and generate the pickle files
-cifar_to_pickle(train_x, train_y, test_x, test_y)
+    # call the second function and generate the pickle files
+    cifar_to_pickle(train_x, train_y, test_x, test_y)

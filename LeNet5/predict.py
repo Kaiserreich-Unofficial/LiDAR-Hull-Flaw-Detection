@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 from model import LeNet
 import pickle
+from easygui import fileopenbox
 
 # load the meta data file
 with open("batches.meta", "rb") as f:
@@ -50,14 +51,16 @@ def output_to_label_and_confidence(output):
     # return the tuple of label name and confidence
     return (label_name, confidence)
 
+if __name__ == "__main__":
+    # read an image and convert it to network input
+    image_path = fileopenbox(msg="请打开需要预测的图片(需要jpg格式)",title="LeNet5分类器预测",filetypes=["*.jpg"])
+    if not image_path:
+        exit()
+    input_img = image_to_input(image_path)
 
-# read an image and convert it to network input
-image_path = input("Path to Img:")
-input_img = image_to_input(image_path)
+    # forward propagation and get the network output and label name
+    output = net(input_img)
+    label_name, confidence = output_to_label_and_confidence(output)
 
-# forward propagation and get the network output and label name
-output = net(input_img)
-label_name, confidence = output_to_label_and_confidence(output)
-
-# print the image path and label name and confidence
-print(f"Image: {image_path}, Label: {label_name}, Confidence: {confidence:.2f}%")
+    # print the image path and label name and confidence
+    print(f"Image: {image_path}, Label: {label_name}, Confidence: {confidence:.2f}%")
