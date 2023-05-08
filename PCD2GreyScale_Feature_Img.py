@@ -1,7 +1,6 @@
 import open3d as o3d
 import numpy as np
 import matplotlib.pyplot as plt
-from skimage import exposure
 import os
 from tqdm import tqdm
 from multiprocessing.pool import Pool
@@ -31,7 +30,7 @@ def pcd2grayhistogram(file):
 
     # 使用numpy.histogram2d函数，将x, y数组作为输入，指定bins参数为你想要的图片尺寸，指定weights参数为z数组，得到一个二维数组matrix，表示每个像素的灰度值
     matrix, _, _ = np.histogram2d(x, y, bins=(1267, 1267), weights=z)
-    matrix = np.where((matrix > -0.01) & (matrix < 1), 255, 0)
+    matrix = np.where((matrix > -0.01) & (matrix < 1), 0, 255)
     # matrix = exposure.rescale_intensity(
     #    matrix, in_range=(0, 1), out_range=(0, 255))
     # print(matrix)
