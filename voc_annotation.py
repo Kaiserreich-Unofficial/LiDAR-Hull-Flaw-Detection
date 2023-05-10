@@ -32,7 +32,7 @@ train_percent       = 0.9
 VOCdevkit_path  = 'VOCdevkit'
 
 VOCdevkit_sets  = [('2007', 'train'), ('2007', 'val')]
-classes     = ["crack",]
+classes     = ["crack","hole"]
 
 #-------------------------------------------------------#
 #   统计目标数量

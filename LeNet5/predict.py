@@ -12,18 +12,15 @@ with open("batches.meta", "rb") as f:
 # create an instance of the network
 net = LeNet()
 # load the model parameters
-net.load_state_dict(torch.load("lenet5_model.pth"))
-
-# define a function to convert an image to network input
-
+net.load_state_dict(torch.load("best_epoch.pth"))
 
 # define a function to convert an image to network input
 def image_to_input(image_path):
     # image_path is the path of the image file
-    # return a torch tensor of shape (1, 3, 32, 32), where 1 is the batch size
+    # return a torch tensor of shape (1, 3, 256, 256), where 1 is the batch size
     # open the image and resize it to 32x32 pixels
     img = Image.open(image_path)
-    img = img.resize((32, 32))
+    img = img.resize((256,256))
     # convert the image to torch tensor and adjust its shape and type
     img_tensor = torch.from_numpy(np.array(img)).float()
     # change the order of dimensions from (H, W, C) to (C, H, W)
@@ -31,9 +28,6 @@ def image_to_input(image_path):
     img_tensor = img_tensor.unsqueeze(0)  # add a dimension for batch size
     # return the tensor
     return img_tensor
-
-# define a function to convert network output to label name and confidence
-
 
 def output_to_label_and_confidence(output):
     # output is a torch tensor of shape (1, c), where 1 is the batch size and c is the number of classes
@@ -46,7 +40,7 @@ def output_to_label_and_confidence(output):
     label_name = meta["label_names"][index]
     # get the confidence from the value
     if value >= 100:
-        confidence = 100  # convert the probability to percentage
+        confidence = 100
     else:
         confidence = value
     # return the tuple of label name and confidence
@@ -62,7 +56,9 @@ if __name__ == "__main__":
     # forward propagation and get the network output and label name
     output = net(input_img)
     label_name, confidence = output_to_label_and_confidence(output)
-
+    if confidence <= 20:
+        label_name = "background"
+        confidence = 0
     # print the image path and label name and confidence
     str = f"Image: {basename(image_path)}\nLabel: {label_name}\nConfidence: {confidence:.2f}%"
     msgbox(msg=str,title="预测结果",ok_button="确定")

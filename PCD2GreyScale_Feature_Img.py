@@ -8,12 +8,12 @@ import random
 from copy import deepcopy
 
 batch_size = 8
-Crack_PCD = "Crack_PCD"
+Flaw_PCD = "Flaw_PCD"
 Fine_PCD = "Fine_PCD"
 
 
 def clean():
-    os.system("del Crack_PCD\*.jpg")
+    os.system("del Flaw_PCD\*.jpg")
     os.system("del Fine_PCD\*.jpg")
 
 
@@ -29,7 +29,7 @@ def pcd2grayhistogram(file):
     z = point_cloud[:, 2]
 
     # 使用numpy.histogram2d函数，将x, y数组作为输入，指定bins参数为你想要的图片尺寸，指定weights参数为z数组，得到一个二维数组matrix，表示每个像素的灰度值
-    matrix, _, _ = np.histogram2d(x, y, bins=(1267, 1267), weights=z)
+    matrix, _, _ = np.histogram2d(x, y, bins=(256, 256), weights=z)
     matrix = np.where((matrix > -0.01) & (matrix < 1), 0, 255)
     # matrix = exposure.rescale_intensity(
     #    matrix, in_range=(0, 1), out_range=(0, 255))
@@ -76,6 +76,6 @@ def main(Source_Dir):
 if __name__ == "__main__":
     clean()
     print("转换有裂缝板点云为灰度直方图...")
-    main(Crack_PCD)
+    main(Flaw_PCD)
     print("转换无裂缝板点云为灰度直方图...")
     main(Fine_PCD)

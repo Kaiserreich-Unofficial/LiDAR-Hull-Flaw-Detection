@@ -4,18 +4,25 @@ from PIL import Image
 import numpy as np
 import os
 from multiprocessing.pool import Pool
+import random
+from copy import deepcopy
 
 Source_Dir = "Label_Image"
-Crack_PCD = "Crack_PCD"
+Crack_PCD = "Flaw_PCD"
 Fine_PCD = "Fine_PCD"
 
 count = 0
 batch_size = 8
 
 
-def main_func(i):
+def clean():
+    os.system("del Flaw_PCD\*.pcd")
+    os.system("del Fine_PCD\*.pcd")
+
+def img2pcd(file):
+    name = os.path.basename(file)[:-4]
     # 读取图片并转换为二值化的布尔数组
-    img = Image.open(os.path.join(Source_Dir, str(i)+".bmp"))
+    img = Image.open(file)
     img = img.convert("L")
     img = np.array(img)
     img1 = np.where(img < 128, True, False)  # 根据条件选择元素
@@ -49,30 +56,39 @@ def main_func(i):
     pcd.points = o3d.utility.Vector3dVector(
         points)  # 将numpy数组转换为Open3D向量，并赋值给点云对象
     downpcd = pcd.voxel_down_sample(voxel_size=2)
-    print("样本"+str(i)+",压缩后点数量:{0:},压缩前点数量压缩率:{1:},压缩率:{2:.2%}".format(
+    print("样本"+ name +",压缩后点数量:{0:},压缩前点数量:{1:},压缩率:{2:.2%}".format(
         len(downpcd.points), len(pcd.points), len(downpcd.points)/len(pcd.points)))
-    o3d.io.write_point_cloud(path+"/"+str(i)+".pcd", downpcd)
+    o3d.io.write_point_cloud(path+"\\"+ name +".pcd", downpcd)
     return 0
 
 
 if __name__ == "__main__":
-    # 遍历文件夹
-    for path in os.listdir(Source_Dir):
-        # 检查当前路径是否为文件
-        if os.path.isfile(os.path.join(Source_Dir, path)):
-            count += 1
-    print('Label Image Count:', count)
+    clean()
+    # 定义存储文件名的数组
+    file_names = []
+    # 遍历文件夹，将文件名加入数组
+    for filename in os.listdir(Source_Dir):
+        file_names.append(os.path.join(Source_Dir, filename))
+    print('Label Image Count:', len(file_names))
+    count = len(file_names)
     with tqdm(total=count) as pbar:
-        pbar.set_description('转化点云中:')
-        for i in range(1, int(count/batch_size)):
-            numlist = []
-            for j in range(batch_size):
-                numlist.append(j + i*batch_size + 1)
+        pbar.set_description('转化为灰度直方图中:')
+        for i in range(int(count/batch_size) + 1):
+            if len(file_names) > batch_size:
+                selected_files = random.sample(file_names, batch_size)
+                Update_Progress = batch_size
+            else:
+                selected_files = deepcopy(file_names)
+                Update_Progress = len(file_names)
+            file_list = []
+            for file in selected_files:
+                file_names.remove(file)
+                file_list.append(file)
 
-            pool = Pool(batch_size)
-            result = pool.map(main_func, numlist)
-            if result == [0]*batch_size:
+            pool = Pool(Update_Progress)
+            result = pool.map(img2pcd, file_list)
+            if result == [0] * Update_Progress:
                 pool.close()
             pool.join()
 
-            pbar.update(batch_size)
+            pbar.update(Update_Progress)

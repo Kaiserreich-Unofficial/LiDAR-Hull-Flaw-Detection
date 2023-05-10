@@ -128,9 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-/Crack_PCD
+/Flaw_PCD
 /Fine_PCD
-/Crack_Annotations
+/Flaw_Annotations
 /Fine_Annotations
 /VOCdevkit
 /CiFAR10
