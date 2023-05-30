@@ -135,4 +135,5 @@ dmypy.json
 /VOCdevkit
 /CiFAR10
 .blend1
-.pth
+lenet5_model_epoch_*.pth
+best_epoch.pth
