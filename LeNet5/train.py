@@ -88,6 +88,8 @@ for epoch in range(epochs):
         # 将输入数据和标签转移到CUDA设备上
         inputs = inputs.to(device)
         labels = labels.to(device)
+        # 转换图片从RGB格式到灰度格式，对通道维度求平均值，得到单通道的灰度图，shape为(n,1,h,w)，其中n是批量大小，h和w是图片高度和宽度
+        inputs = torch.mean(inputs, dim=1).unsqueeze(1)
         # zero the parameter gradients
         optimizer.zero_grad()
         # forward propagation
@@ -110,6 +112,7 @@ for epoch in range(epochs):
         inputs = inputs.to(device)
         labels = labels.to(device)
         # forward propagation
+        inputs = torch.mean(inputs,dim=1).unsqueeze(1)
         outputs = net(inputs)
         # calculate the loss
         loss = criterion(outputs, labels)

@@ -52,6 +52,7 @@ if __name__ == "__main__":
     if not image_path:
         exit()
     input_img = image_to_input(image_path)
+    input_img = torch.mean(input_img,dim=1).unsqueeze(1)
 
     # forward propagation and get the network output and label name
     output = net(input_img)
