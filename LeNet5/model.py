@@ -12,14 +12,15 @@ class LeNet(nn.Module):
         self.fc2 = nn.Linear(120,84)
         self.fc3 = nn.Linear(84,2)
 
+
     def forward(self, x):
-        x = F.selu(self.conv1(x))#input(1,256,256) output(16,252,252)
+        x = F.relu(self.conv1(x))#input(1,256,256) output(16,252,252)
         x = self.pool1(x) #output(16,126,126)
         x = F.relu(self.conv2(x)) #output(32,122,122)
         x = self.pool2(x) #output(32,61,61)
         x = x.view(-1,32*61*61) #output(32*61*61)
-        x = F.selu(self.fc1(x)) #output(120)
-        x = F.selu(self.fc2(x)) #output(84)
+        x = F.relu(self.fc1(x)) #output(120)
+        x = F.relu(self.fc2(x)) #output(84)
         x = self.fc3(x) #output(2)
         return x
 
