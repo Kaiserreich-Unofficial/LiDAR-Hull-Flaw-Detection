@@ -168,7 +168,7 @@ def f_downsample(n, node, node_info):
     return False
 
 
-default_downsample = partial(f_downsample, 100)
+default_downsample = partial(f_downsample, 64)
 
 points = []
 # 遍历树
@@ -190,11 +190,14 @@ o3d.visualization.draw_geometries(
 
 rec_mesh = Possion_Reshape(downsampled_pcd)
 croped_mesh = Hull_Vertices_Cut(rec_mesh)
-
+radii = [0.05, 0.1, 0.2, 0.4] # 设置不同半径的球
+rec_mesh2 = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(downsampled_pcd, o3d.utility.DoubleVector(radii)) # 从点云创建滚球法网格
 o3d.visualization.draw_geometries([croped_mesh], window_name="泊松重建并切割后的船体曲面")
-
+o3d.visualization.draw_geometries([rec_mesh2], window_name="滚球法重建的船体曲面")
 print("对泊松重建表面进行点云重采样")
 reshaped_pcd = Possion_Sample(croped_mesh)
-
+reshaped_pcd2 = Possion_Sample(rec_mesh2)
 fitness, rmse = Fitness_Estm(pcd2, reshaped_pcd)
+print("拟合准度指标:{0:.2%},异常点的均方根误差:{1:.3f}".format(fitness, rmse))
+fitness, rmse = Fitness_Estm(pcd2, reshaped_pcd2)
 print("拟合准度指标:{0:.2%},异常点的均方根误差:{1:.3f}".format(fitness, rmse))
